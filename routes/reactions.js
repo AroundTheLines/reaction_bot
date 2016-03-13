@@ -5,12 +5,18 @@ var CLIENT_EVENTS = require('@slack/client').CLIENT_EVENTS;
 var RTM_EVENTS = require('@slack/client').RTM_EVENTS;
 var router = express.Router();
 
-var slackToken = process.env.SLACK_API_TOKEN || 'xoxb-26381536339-O8XkqGM8fPY4TsC4yGo92hue';
+// Replace with your Slack API token
+var slackToken = process.env.SLACK_API_TOKEN || '';
 
 var rtm = new RtmClient(slackToken, {logLevel: 'debug'});
 rtm.start();
 
+// Name of the person to be reacted to
 var name_for = 'michael';
+// Name of emoji to be reacted with
+var emoji = 'shio';
+
+// Don't touch this one
 var name_id = '';
 
 rtm.on(CLIENT_EVENTS.RTM.AUTHENTICATED, function (rtmStartData) {
@@ -26,15 +32,11 @@ rtm.on(CLIENT_EVENTS.RTM.AUTHENTICATED, function (rtmStartData) {
 rtm.on(RTM_EVENTS.MESSAGE, function (message) {
   console.log("The message is: " + message.text);
   if(message.user === name_id){
-  	request.get('https://slack.com/api/reactions.add?token=' + slackToken + '&name=shio&channel=' + message.channel + '&timestamp=' + message.ts)
+  	request.get('https://slack.com/api/reactions.add?token=' + slackToken + '&name=' + emoji +'&channel=' + message.channel + '&timestamp=' + message.ts)
   	.on('response', function(response){
   		console.log(response.headers);
   	});
   }
-  // request.get('https://slack.com/api/reactions.add?token=' + slackToken + '&name=shio&channel=' + message.channel + '&timestamp=' + message.ts)
-  // 	.on('response', function(response){
-  // 		console.log(response.headers);
-  // 	});
 });
 
 module.exports = router;
